@@ -1,7 +1,36 @@
 import express from 'express';
+//importando session do modulo express-session;
+import session from 'express-session';
+
+//importando o modulo cookie-parser para permitir que a nossa aplicação solicite e retorne cookies
+import cookieParser from 'cookie-parser';
+
+import path from 'path';
 
 const app = express();
-app.use(express.urlencoded({extended: true}));
+
+app.use(express.urlencoded({ extended: true }));
+
+//configurar uma sessao a fim de pertmitir que a aolicaçao seja capaz de lembrar com quem ela esta falando.
+//Em outras palabvras, ele vai armazenar as informacoes do usuario que estiver logado.
+app.use(session({
+    secret: 'Minh4Chav3S3cr3t4',
+    resave: false, //Não salva a sessão se nao houver mudanças
+    saveUninitialized: true,//
+    cookie: {
+        maxAge: 1000 * 60 * 30// maxAge funciona em milisegundos: 1 segundo tem 1000 milisegundos * 60 desses milisegundos tem 1 minuto * 30 tem 30 minutos
+        //Se o usuario fizer logout, a sessão vai ser expirada automaticamente
+    }
+}))
+//ADICIONANDO O MEDIOWARE COOKIE-PARSER
+app.use(cookieParser());
+
+app.use(express.static('./public'));
+
+//configurar a pasta public para servir arquivos estáticos
+//permitindo que o conteúdo de uma determinada pasta seja visivel para os usuarios
+app.use(express.static('.pagnas/public'));
+
 const porta = 3000; 
 const host = 'localhost'; //ip refere-se a todas as interfaces locais(placas de rede do seu pc)
 
@@ -13,85 +42,60 @@ function cadastro(req, resp) {
     resp.send(`
         <html>
             <head>
-                <title>Cadastro de funcionarios</title>
+                <title>Cadastro de Prrodutos</title>
                 <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css" rel="stylesheet" integrity="sha384-QWTKZyjpPEjISv5WaRU9OFeRpok6YctnYmDr5pNlyT2bRjXh0JMhjY6hW+ALEwIH" crossorigin="anonymous">
                 <meta charset="utf-8">
             </head>
             <body>
 
                 <div>
-                    <h1>Cadastro de funcionario</h1>
+                    <h1>Cadastro de Produto</h1>
                     <form method="POST" action="/cadastrarfuncionario" class="row g-3" novalidate>
                         <div class="col-md-4">
-                            <label for="nome" class="form-label">*Nome</label>
+                            <label for="nome" class="form-label">*Nome do Produto</label>
                             <input type="text" class="form-control" id="nome" name="nome">
                         </div>
 
                         <div class="col-md-4">
-                                <label for="nfantasia" class="form-label">Nome da Empresa</label>
+                                <label for="nfantasia" class="form-label">Código de barras</label>
                                 <input type="text" class="form-control" id="Empresa" name="Empresa">
     
                              </div>
 
                         <div class="col-md-4">
-                            <label for="validationCustomUsername" class="form-label">*Email</label>
+                            <label for="validationCustomUsername" class="form-label">*Preço de custo</label>
                                 <div class="input-group has-validation">
-                                <span class="input-group-text" id="inputGroupPrepend">@</span>
-                                <input type="text" class="form-control" id="Email" name="email">
+                                <span class="input-group-text" id="inputGroupPrepend">R$</span>
+                                <input type="number" class="form-control" id="Email" name="email">
                                 </div>
                         </div>
 
                         <div class="col-md-6">
-                                <label for="end" class="form-label">Endereço</label>
-                                <input type="text" class="form-control" id="endereco" name="endereco">
+                                <label for="end" class="form-label">Descrição do produto</label>
+                                <input type="textbox" class="form-control" id="endereco" name="endereco">
                             </div>
                             <div class="col-md-6">
-                                <label for="cidade" class="form-label">Cidade</label>
-                                <input type="text" class="form-control" id="cidade" name="cidade">
+                                <label for="cidade" class="form-label">Preço de venda</label>
+                                <div class="input-group has-validation">
+                                <span class="input-group-text" id="inputGroupPrepend">R$</span>
+                                <input type="number" class="form-control" id="cidade" name="cidade">
+                                </div>
                             </div>
 
-                         <div class="col-md-3">
-                                <label for="estado" class="form-label">UF</label>
-                                <select class="form-select" id="estado" name="estado">
-                                    <option selected value="SP">São Paulo</option>
-                                    <option value="AC">Acre</option>
-                                    <option value="AL">Alagoas</option>
-                                    <option value="AP">Amapá</option>
-                                    <option value="AM">Amazonas</option>
-                                    <option value="BA">Bahia</option>
-                                    <option value="CE">Ceará</option>
-                                    <option value="DF">Distrito Federal</option>
-                                    <option value="ES">Espírito Santo</option>
-                                    <option value="GO">Goiás</option>
-                                    <option value="MA">Maranhão</option>
-                                    <option value="MT">Mato Grosso</option>
-                                    <option value="MS">Mato Grosso do Sul</option>
-                                    <option value="MG">Minas Gerais</option>
-                                    <option value="PA">Pará</option>
-                                    <option value="PB">Paraíba</option>
-                                    <option value="PR">Paraná</option>
-                                    <option value="PE">Pernambuco</option>
-                                    <option value="PI">Piauí</option>
-                                    <option value="RJ">Rio de Janeiro</option>
-                                    <option value="RN">Rio Grande do Norte</option>
-                                    <option value="RS">Rio Grande do Sul</option>
-                                    <option value="RO">Rondônia</option>
-                                    <option value="RR">Roraima</option>
-                                    <option value="SC">Santa Catarina</option>
-                                    <option value="SE">Sergipe</option>
-                                    <option value="TO">Tocantins</option>
-                                </select>
+                         <div class="col-md-6">
+                                <label for="end" class="form-label">Data de validade</label>
+                                <input type="date" class="form-control" id="validade" name="validade">
                             </div>
 
 
                         <div class="col-md-3">
-                                <label for="cep" class="form-label">Cep:</label>
-                                <input type="text" class="form-control" id="cep" name="cep">
+                                <label for="cep" class="form-label">Qtd em estoque</label>
+                                <input type="number" class="form-control" id="cep" name="cep">
                             </div>
 
                     <div class="col-md-3">
                         <label for="numero" class="form-label">Numero do Celular:</label>
-                        <input type="text" class="form-control" id="numero" name="numero">
+                        <input type="number" class="form-control" id="numero" name="numero">
                         </div>
                     </div>
 
@@ -107,9 +111,14 @@ function cadastro(req, resp) {
 }
 
 function menuView(req,resp) {
+
+    const dataHoraUltimoAcesso = req.cookie = ['dataHoraUltimoAcesso'];
+
+    if(!dataHoraUltimoAcesso){
+        dataHoraUltimoAcesso='';}
     resp.send(`
 <html><head>
-<title>Cadastro de funcionarios</title>
+<title>Cadastro de Produtos</title>
     <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css" rel="stylesheet" integrity="sha384-QWTKZyjpPEjISv5WaRU9OFeRpok6YctnYmDr5pNlyT2bRjXh0JMhjY6hW+ALEwIH" crossorigin="anonymous">
     <meta charset="utf-8">
     </head>
@@ -118,7 +127,10 @@ function menuView(req,resp) {
         <div class="container-fluid">
             <a class="navbar-brand" href="/cadastrarfuncionario">MENU</a>
             <div class="navbar-nav">
-                <a class="nav-link active" aria-current="page" href="/cadastrarfuncionario">Cadastrar funcionario</a>
+                <a class="nav-link active" aria-current="page" href="/cadastrarfuncionario">Cadastrar Produto</a>
+                <li class="nav-item">
+                <a class="nav-link disabled" aria-disabled="true">Seu Ultimo acesso foi realizado em: ${dataHoraUltimoAcesso}</a>
+                </li>
             </div>
             </div>
         </div>
@@ -133,9 +145,9 @@ function cadastrarfuncionario(req, resp){
     const nome = req.body.nome;
     const Empresa = req.body.Empresa;
     const email = req.body.email;
-    const endereco = req.body.endereco;
-    const cidade = req.body.cidade;
-    const estado = req.body.estado;
+    const Descrição = req.body.endereco;
+    const venda = req.body.cidade;
+    const validade = req.body.validade;
     const cep = req.body.cep;
     const numero = req.body.numero;
 
@@ -144,9 +156,9 @@ function cadastrarfuncionario(req, resp){
 //Validar a entrada do Usuario
 //caso os dados não estiverem validos nos deveremos retornar um feedback
 
-    if(nome&& Empresa&& email&& endereco&& cidade&& estado && cep&& numero){
+    if(nome&& Empresa&& email&& Descrição&& venda&& validade && cep&& numero){
         
-        const funcionario = {nome,Empresa,email,endereco,cidade,estado,cep,numero};
+        const funcionario = {nome,Empresa,email,Descrição,venda,validade,cep,numero};
 
         //adiciona funcionarios a cada envio
         listafuncionario.push(funcionario);
@@ -164,9 +176,9 @@ function cadastrarfuncionario(req, resp){
                             <th scope="col">nome</th>
                             <th scope="col">Empresa</th>
                             <th scope="col">email</th>
-                            <th scope="col">endereco</th>
-                            <th scope="col">cidade</th>
-                            <th scope="col">estado</th>
+                            <th scope="col">Descrição</th>
+                            <th scope="col">venda</th>
+                            <th scope="col">validade</th>
                             <th scope="col">cep</th>
                             <th scope="col">telefone</th>
                         </th>
@@ -180,9 +192,9 @@ function cadastrarfuncionario(req, resp){
                                 <td>${listafuncionario[i].nome}</td>                        
                                 <td>${listafuncionario[i].Empresa}</td> 
                                 <td>${listafuncionario[i].email}</td> 
-                                <td>${listafuncionario[i].endereco}</td>
-                                <td>${listafuncionario[i].cidade}</td>
-                                <td>${listafuncionario[i].estado}</td>
+                                <td>${listafuncionario[i].Descrição}</td>
+                                <td>${listafuncionario[i].venda}</td>
+                                <td>${listafuncionario[i].validade}</td>
                                 <td>${listafuncionario[i].cep}</td> 
                                 <td>${listafuncionario[i].telefone}</td>
                             </tr>
@@ -204,7 +216,7 @@ function cadastrarfuncionario(req, resp){
             
             <html>
                 <head>
-                    <title>Cadastro de funcionarios</title>
+                    <title>Cadastro de Produtos</title>
                     <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css" rel="stylesheet" integrity="sha384-QWTKZyjpPEjISv5WaRU9OFeRpok6YctnYmDr5pNlyT2bRjXh0JMhjY6hW+ALEwIH" crossorigin="anonymous">
                     <meta charset="utf-8">
                 </head>
@@ -260,12 +272,12 @@ function cadastrarfuncionario(req, resp){
 
             resp.write(`
                 <div class="col-md-6">
-                    <label for="end"class="form-label">Endereço</label>
-                    <input type="text" class="form-control" id="endereco" name="endereco" value="${endereco}">
+                    <label for="end"class="form-label">Descrição do Produto</label>
+                    <input type="text" class="form-control" id="endereco" name="endereco" value="${Descrição}">
                 </div>
                                 `);
 
-            if(!endereco){
+            if(!Descrição){
                 resp.write(`
                 <div>
                     <span><p class="text-danger">O campo endereço deve ser preenchido</p></span>
@@ -275,138 +287,34 @@ function cadastrarfuncionario(req, resp){
 
             resp.write(`
                 <div class="col-md-3">
-                    <label for="cidade" class="form-label">Cidade</label>
-                    <input type="text" class="form-control" id="cidade" name="cidade" value="${cidade}">
+                    <label for="venda" class="form-label">Preço de venda</label>
+                    <input type="text" class="form-control" id="cidade" name="cidade" value="${venda}">
                 </div>
                 `); 
 
-            if(!cidade){    
+            if(!venda){    
                 resp.write(`
                 <div>
-                    <span><p class="text-danger">O campo cidade deve ser preenchido</p></span>
+                    <span><p class="text-danger">O campo Preço de venda deve ser preenchido</p></span>
                 </div>
                 `);
             }
 
-            resp.write(`
-                <div class="col-md-3">
-                     <label for="estado" class="form-label">UF</label>
-                    <select class="form-select" id="estado" name="estado">`);
-            if(estado == "SP"){
-                resp.write(`<option selected value="SP">São Paulo</option>`);}
-            else{
-                resp.write(`<option value="SP">São Paulo</option>`);
-            }
-            if(estado == "AC"){
-                resp.write(`<option selected value="AC">Acre</option>`);}
-            else{
-                resp.write(`<option value="AC">Acre</option>`);}
-                        
-            if(estado == "AL"){
-                resp.write(`<option selected value="AL">Alagoas</option>`);}
-            else{
-                resp.write(`<option value="AL">Alagoas</option>`);}
-            if(estado == "AP"){
-                resp.write(`<option selected value="AP">Amapá</option>`);}
-            else{
-                resp.write(`<option value="AP">Amapá</option>`);}
-            if(estado == "AM"){
-                resp.write(`<option selected value="AM">Amazonas</option>`);}
-            else{
-                resp.write(`<option value="AM">Amazonas</option>`);}
-            if(estado == "BA"){
-                resp.write(`<option selected value="BA">Bahia</option>`);}
-            else{
-                resp.write(`<option value="BA">Bahia</option>`);}
-            if(estado == "CE"){
-                resp.write(`<option selected value="CE">Ceará</option>`);}
-            else{
-                resp.write(`<option value="CE">Ceará</option>`);}
-            if(estado == "DF"){
-                resp.write(`<option selected value="DF">Distrito Federal</option>`);}
-            else{
-                resp.write(`<option value="DF">Distrito Federal</option>`);}
-            if(estado == "ES"){
-                resp.write(`<option selected value="ES">Espírito Santo</option>`);}
-            else{
-                resp.write(`<option value="ES">Espírito Santo</option>`);}
-            if(estado == "GO"){
-                resp.write(`<option selected value="GO">Goiás</option>`);}
-            else{
-                resp.write(`<option value="GO">Goiás</option>`);}
-            if(estado == "MA"){
-                resp.write(`<option selected value="MA">Maranhão</option>`);}
-            else{
-                resp.write(`<option value="MA">Maranhão</option>`);}
-            if(estado == "MT"){
-                resp.write(`<option selected value="MT">Mato Grosso</option>`);}
-            else{
-                resp.write(`<option value="MT">Mato Grosso</option>`);}
-            if(estado == "MS"){
-                resp.write(`<option selected value="MS">Mato Grosso do Sul</option>`);}
-            else{
-                resp.write(`<option value="MS">Mato Grosso do Sul</option>`);}
-            if(estado == "MG"){
-                resp.write(`<option selected value="MG">Minas Gerais</option>`);}
-            else{
-                resp.write(`<option value="MG">Minas Gerais</option>`);}
-            if(estado == "PA"){
-                resp.write(`<option selected value="PA">Pará</option>`);}
-            else{
-                resp.write(`<option value="PA">Pará</option>`);}
-            if(estado == "PB"){
-                resp.write(`<option selected value="PB">Paraíba</option>`);}
-            else{
-                resp.write(`<option value="PB">Paraíba</option>`);}
-            if(estado == "PR"){
-                resp.write(`<option selected value="PR">Paraná</option>`);}
-            else{
-                resp.write(`<option value="PR">Paraná</option>`);}
-            if(estado == "PE"){
-                resp.write(`<option selected value="PE">Pernambuco</option>`);}
-            else{
-                resp.write(`<option value="PE">Pernambuco</option>`);}
-            if(estado == "PI"){
-                resp.write(`<option selected value="PI">Piaí</option>`);}
-            else{
-                resp.write(`<option value="PI">Piaí</option>`);}
-            if(estado == "RJ"){
-                resp.write(`<option selected value="RJ">Rio de Janeiro</option>`);}
-            else{
-                resp.write(`<option value="RJ">Rio de Janeiro</option>`);}
-            if(estado == "RN"){
-                resp.write(`<option selected value="RN">Rio Grande do Norte</option>`);}
-            else{
-                resp.write(`<option value="RN">Rio Grande do Norte</option>`);}
-            if(estado == "RS"){
-                resp.write(`<option selected value="RS">Rio Grande do Sul</option>`);}
-            else{
-                resp.write(`<option value="RS">Rio Grande do Sul</option>`);}
-            if(estado == "RO"){
-                resp.write(`<option selected value="RO">Rondônia</option>`);}
-            else{
-                resp.write(`<option value="RO">Rondônia</option>`);}
-            if(estado == "RR"){
-                resp.write(`<option selected value="RR">Roraima</option>`);}
-            else{
-                resp.write(`<option value="RR">Roraima</option>`);}
-            if(estado == "SC"){
-                resp.write(`<option selected value="SC">Santa Catarina</option>`);}
-            else{
-                resp.write(`<option value="SC">Santa Catarina</option>`);}
-            if(estado == "SE"){
-                resp.write(`<option selected value="SE">Sergipe</option>`);}
-            else{
-                resp.write(`<option value="SE">Sergipe</option>`);}
-            if(estado == "SP"){
-                resp.write(`<option selected value="SP">São Paulo</option>`);}
-            else{
-                resp.write(`<option value="SP">São Paulo</option>`);}
-            if(estado == "TO"){
-                resp.write(`<option selected value="TO">Tocantins</option>`);}
-            else{
-                resp.write(`<option value="TO">Tocantins</option>`);}
+            rresp.write(`
+                <div class="col-md-6">
+                    <label for="end"class="form-label">Endereço</label>
+                    <input type="text" class="form-control" id="validade" name="validade" value="${validade}">
+                </div>
+                                `);
 
+            if(!validade){
+                resp.write(`
+                <div>
+                    <span><p class="text-danger">O campo endereço deve ser preenchido</p></span>
+                </div>
+                `);
+            }
+            
     resp.write(`
         <div class="col-md-3">
         <label for="cep" class="form-label">Cep</label>
@@ -437,10 +345,61 @@ function cadastrarfuncionario(req, resp){
         resp.end();//envia a resposta
      
 }
+function autenticarUsuario(req, resp){ 
+    const usuario = req.body.usuario;
+    const senha = req.body.senha;
 
-app.get('/',menuView);
-app.get('/cadastrarfuncionario', cadastro);//envia o formulario para cadastrar o personagem
-app.post('/cadastrarfuncionario', cadastrarfuncionario);
+    if(usuario === 'admin' && senha === '123'){//registrar
+        //Criar uma sessão individualmente para cada usuario que faça login
+        req.session.usuarioLogado = true;
+        //criar um cookie enviando para o navegador a data e hora de acesso do usuario
+        resp.cookie('dataHoraUltimoAcesso', new Date().toLocaleString(), {maxAge: 1000 * 60 * 60 * 24 * 30, httpOnly: true });
+        resp.redirect('/')
+    }   
+    else{
+        resp.send(`
+        <html>
+        <head>
+            <meta charset="utf-8">
+            <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.0.2/dist/css/bootstrap.min.css" rel="stylesheet" integrity="sha384-EVSTQN3/azprG1Anm3QDgpJLIm9Nao0Yz1ztcQTwFspd3yD65VohhpuuCOmLASjC" crossorigin="anonymous">
+        </head>
+            <body>
+            <div class="container w-25">
+                <div class="alert alert-danger" role="alert"> 
+                Usuário ou senha inválidos!
+                </div>
+                <div>
+                <a href="/login.html" class="btn btn-primary" role="button">Tentar novamente</a>
+                </div>
+            </div>
+            </body>
+        <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.0.2/dist/js/bootstrap.bundle.min.js" integrity="sha384-MrcW6ZMFYlzcLA8Nl+NtUVF0sA7MsXsP1UyJoMp4YLEuNSfAP+JcXn/tWtIaxVXM" crossorigin="anonymous">
+        </script>
+        </html>
+        `);
+    }
+
+}
+
+//é o nosso middleware de segurançanca
+function verificarAutenticacao(req, resp, next) {
+    if(req.session.usuarioLogado){
+        next();//permita acessar os recursos solicitados
+    }
+    else{
+        resp.redirect('/login.html');
+    }
+}
+
+app.get('/login',(req,resp) =>{  
+
+    resp.sendFile(path.join(__dirname, 'public', 'login.html'));
+    //resp.redirect('/login.html');
+});
+app.post('/login',autenticarUsuario);
+app.get('/',verificarAutenticacao, menuView);
+app.get('/cadastrarfuncionario',verificarAutenticacao, cadastro);//envia o formulario para cadastrar o personagem
+app.post('/cadastrarfuncionario',verificarAutenticacao, cadastrarfuncionario);
 
 
 app.listen(porta, host, () => {
