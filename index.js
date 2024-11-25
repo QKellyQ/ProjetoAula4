@@ -62,7 +62,8 @@ function cadastro(req, resp) {
     
                              </div>
 
-                        <div class="col-md-4">
+
+                             <div class="col-md-4">
                             <label for="validationCustomUsername" class="form-label">*Preço de custo</label>
                                 <div class="input-group has-validation">
                                 <span class="input-group-text" id="inputGroupPrepend">R$</span>
@@ -91,6 +92,11 @@ function cadastro(req, resp) {
                         <div class="col-md-3">
                                 <label for="cep" class="form-label">Qtd em estoque</label>
                                 <input type="number" class="form-control" id="cep" name="cep">
+                            </div>
+
+                            <div class="col-md-3">
+                                <label for="cep" class="form-label"Fabricante</label>
+                                <input type="number" class="form-control" id="Fabricante" name="Fabricante">
                             </div>
 
                     <div class="col-12">
@@ -143,6 +149,7 @@ function cadastrarfuncionario(req, resp){
     const venda = req.body.cidade;
     const validade = req.body.validade;
     const cep = req.body.cep;
+    const Fabricante = req.body.Fabricante;
    
 
     
@@ -150,9 +157,9 @@ function cadastrarfuncionario(req, resp){
 //Validar a entrada do Usuario
 //caso os dados não estiverem validos nos deveremos retornar um feedback
 
-    if(nome&& Empresa&& email&& Descrição&& venda&& validade && cep){
+    if(nome&& Empresa&& email&& Descrição&& venda&& validade && cep&& Fabricante){
         
-        const funcionario = {nome,Empresa,email,Descrição,venda,validade,cep};
+        const funcionario = {nome,Empresa,email,Descrição,venda,validade,cep,Fabricante};
 
         //adiciona funcionarios a cada envio
         listafuncionario.push(funcionario);
@@ -168,12 +175,13 @@ function cadastrarfuncionario(req, resp){
                     <thead>
                         <tr>
                             <th scope="col">Nome do Produto</th>
-                            <th scope="col">Coodigo de barras</th>
+                            <th scope="col">Codigo de barras</th>
                             <th scope="col">Preco Custo</th>
                             <th scope="col">Descricao</th>
                             <th scope="col">venda</th>
                             <th scope="col">validade</th>
                             <th scope="col">Quantidade em estoque</th>
+                            <th scope="col">Fabricante</th>
                         </th>
                     </thead>
                     <tbody>
@@ -188,7 +196,8 @@ function cadastrarfuncionario(req, resp){
                                 <td>${listafuncionario[i].Descrição}</td>
                                 <td>${listafuncionario[i].venda}</td>
                                 <td>${listafuncionario[i].validade}</td>
-                                <td>${listafuncionario[i].cep}</td> 
+                                <td>${listafuncionario[i].cep}</td>
+                                <td>${listafuncionario[i].Fabricante}</td>
                             </tr>
                             `);
                         
@@ -321,6 +330,21 @@ function cadastrarfuncionario(req, resp){
             </div>
         `);
     }
+    resp.write(`
+        <div class="col-md-3">
+        <label for="Fabricante" class="form-label">Fabricante</label>
+        <input type="text" class="form-control" id="Fabricante" name="Fabricante" value="${Fabricante}">
+        </div>
+   `);
+
+    if(!Fabricante){
+        resp.write(`
+            <div>   
+             <span><p class="text-danger">O campo Fabricante deve ser preenchido</p></span>        
+            </div>
+        `);
+    }
+
         resp.write(`
         </div>
 
