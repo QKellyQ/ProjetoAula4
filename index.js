@@ -93,12 +93,6 @@ function cadastro(req, resp) {
                                 <input type="number" class="form-control" id="cep" name="cep">
                             </div>
 
-                    <div class="col-md-3">
-                        <label for="numero" class="form-label">Numero do Celular:</label>
-                        <input type="number" class="form-control" id="numero" name="numero">
-                        </div>
-                    </div>
-
                     <div class="col-12">
                         <button class="btn btn-primary" type="submit">Cadastrar</button>
                     </div>
@@ -112,7 +106,7 @@ function cadastro(req, resp) {
 
 function menuView(req,resp) {
 
-    const dataHoraUltimoAcesso = req.cookie = ['dataHoraUltimoAcesso'];
+    const dataHoraUltimoAcesso = req.cookies.dataHoraUltimoAcesso;
 
     if(!dataHoraUltimoAcesso){
         dataHoraUltimoAcesso='';}
@@ -149,16 +143,16 @@ function cadastrarfuncionario(req, resp){
     const venda = req.body.cidade;
     const validade = req.body.validade;
     const cep = req.body.cep;
-    const numero = req.body.numero;
+   
 
     
 
 //Validar a entrada do Usuario
 //caso os dados não estiverem validos nos deveremos retornar um feedback
 
-    if(nome&& Empresa&& email&& Descrição&& venda&& validade && cep&& numero){
+    if(nome&& Empresa&& email&& Descrição&& venda&& validade && cep){
         
-        const funcionario = {nome,Empresa,email,Descrição,venda,validade,cep,numero};
+        const funcionario = {nome,Empresa,email,Descrição,venda,validade,cep};
 
         //adiciona funcionarios a cada envio
         listafuncionario.push(funcionario);
@@ -173,14 +167,13 @@ function cadastrarfuncionario(req, resp){
                 <table class="table table-hover">
                     <thead>
                         <tr>
-                            <th scope="col">nome</th>
-                            <th scope="col">Empresa</th>
-                            <th scope="col">email</th>
-                            <th scope="col">Descrição</th>
+                            <th scope="col">Nome do Produto</th>
+                            <th scope="col">Coodigo de barras</th>
+                            <th scope="col">Preco Custo</th>
+                            <th scope="col">Descricao</th>
                             <th scope="col">venda</th>
                             <th scope="col">validade</th>
-                            <th scope="col">cep</th>
-                            <th scope="col">telefone</th>
+                            <th scope="col">Quantidade em estoque</th>
                         </th>
                     </thead>
                     <tbody>
@@ -196,7 +189,6 @@ function cadastrarfuncionario(req, resp){
                                 <td>${listafuncionario[i].venda}</td>
                                 <td>${listafuncionario[i].validade}</td>
                                 <td>${listafuncionario[i].cep}</td> 
-                                <td>${listafuncionario[i].telefone}</td>
                             </tr>
                             `);
                         
@@ -300,7 +292,7 @@ function cadastrarfuncionario(req, resp){
                 `);
             }
 
-            rresp.write(`
+            resp.write(`
                 <div class="col-md-6">
                     <label for="end"class="form-label">Endereço</label>
                     <input type="text" class="form-control" id="validade" name="validade" value="${validade}">
